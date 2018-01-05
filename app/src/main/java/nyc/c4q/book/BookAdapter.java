@@ -15,11 +15,17 @@ import java.util.List;
  */
 
 public class BookAdapter extends RecyclerView.Adapter<BookViewHolder>{
-    public List<JSONObject> bookList= new ArrayList <>();
+    private OnClickListener listener;
+//    public onItemClickListener listener;
+    private List<JSONObject> bookList= new ArrayList <>();
 
+    public List <JSONObject> getBookList() {
+        return bookList;
+    }
 
-    public BookAdapter(List <JSONObject> bookList) {
+    public BookAdapter(List <JSONObject> bookList, OnClickListener listener) {
         this.bookList = bookList;
+        this.listener= listener;
     }
 
     @Override
@@ -30,18 +36,22 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder>{
 
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
-        holder.bind(bookList.get(position), position);
-
+        holder.bind(getBookList().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return bookList.size();
+        return getBookList().size();
     }
 
-    public void remove(int position){
-        bookList.remove(position);
-        this.notifyItemRemoved(position);
+    public void removeItem(int position){
+        getBookList().remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getBookList().size()-1);
+    }
+
+    public interface onItemClickListener{
+        void removeBook(int position);
     }
 
 //    @Override

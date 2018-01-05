@@ -1,11 +1,15 @@
 package nyc.c4q.book;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -20,12 +24,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private List<JSONObject> jsonObjectList= new ArrayList <>();
     static List<JSONObject> cartList= new ArrayList <>();
     private RecyclerView rv;
+    private BookAdapter bookAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         rv= findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         rv.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rv.setAdapter(new BookAdapter(jsonObjectList));
+        bookAdapter= new BookAdapter(jsonObjectList, this);
+        rv.setAdapter(bookAdapter);
 
     }
 
@@ -74,5 +80,41 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+//    @Override
+//    public void removeBook(int position) {
+//        cartList.add(jsonObjectList.get(position));
+//        bookAdapter.removeItem(position);
+//
+//    }
+
+    @Override
+    public void onClickedSelected(int position) {
+        cartList.add(jsonObjectList.get(position));
+        bookAdapter.removeItem(position);
+    }
+
+//    @Override
+//    public void itemClick(int position) {
+//        cartList.remove(position);
+//    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater= getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.cart:
+                Intent cartIntent= new Intent(this, CartActivity.class );
+                startActivity(cartIntent);
+        }
+        return true;
     }
 }

@@ -3,7 +3,10 @@ package nyc.c4q.book;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,12 +14,15 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by yokilam on 1/4/18.
  */
 
 class BookViewHolder extends RecyclerView.ViewHolder {
     BookAdapter bookAdapter;
+    OnClickListener listener;
     private TextView title, author, price;
     private Button addToCart;
 
@@ -28,7 +34,7 @@ class BookViewHolder extends RecyclerView.ViewHolder {
         addToCart = itemView.findViewById(R.id.add_to_cart);
     }
 
-    public void bind(final JSONObject jsonObject, final int position) {
+    public void bind(final JSONObject jsonObject) {
         try {
             title.setText(jsonObject.getString("name"));
             author.setText(jsonObject.getString("author"));
@@ -42,22 +48,21 @@ class BookViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(itemView.getContext(), "CLICK" + position, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(itemView.getContext(), DetailActivity.class);
                 intent.putExtra("jsonObject", jsonObject.toString());
                 itemView.getContext().startActivity(intent);
-
             }
         });
 
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.cartList.add(jsonObject);
-                bookAdapter.bookList.remove(position);
+                Log.d(TAG, "onClick: " + getAdapterPosition());
+//                MainActivity.cartList.add(jsonObject);
 
             }
         });
 
     }
+
 }
